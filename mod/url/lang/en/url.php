@@ -39,7 +39,8 @@ $string['displayselect_help'] = 'This setting, together with the URL file type a
 * Open - Only the URL is displayed in the browser window
 * In pop-up - The URL is displayed in a new browser window without menus or an address bar
 * In frame - The URL is displayed within a frame below the navigation bar and URL description
-* New window - The URL is displayed in a new browser window with menus and an address bar';
+* New window - The URL is displayed in a new browser window with menus and an address bar
+* Preview - The URL preview is displayed within the page. Uses page metadata to create preview.';
 $string['displayselectexplain'] = 'Choose display type, unfortunately not all types are suitable for all URLs.';
 $string['externalurl'] = 'External URL';
 $string['framesize'] = 'Frame height';
@@ -82,3 +83,5 @@ $string['search:activity'] = 'URL';
 $string['serverurl'] = 'Server URL';
 $string['url:addinstance'] = 'Add a new URL resource';
 $string['url:view'] = 'View URL';
+$string['socialmediametatag:linkfrom'] = 'Link from: ';
+$string['socialmediametatag:imagealt'] = 'Image for article: ';

@@ -40,6 +40,8 @@ define('RESOURCELIB_DISPLAY_DOWNLOAD', 4);
 define('RESOURCELIB_DISPLAY_OPEN', 5);
 /** Open in "emulated" pop-up without navigation */
 define('RESOURCELIB_DISPLAY_POPUP', 6);
+/** Display preview of URL using og meta tag data */
+define('RESOURCELIB_DISPLAY_PREVIEW', 7);
 
 /** Legacy files not needed or new resource */
 define('RESOURCELIB_LEGACYFILES_NO', 0);
@@ -119,7 +121,8 @@ function resourcelib_get_displayoptions(array $enabled, $current=null) {
                      RESOURCELIB_DISPLAY_NEW      => get_string('resourcedisplaynew'),
                      RESOURCELIB_DISPLAY_DOWNLOAD => get_string('resourcedisplaydownload'),
                      RESOURCELIB_DISPLAY_OPEN     => get_string('resourcedisplayopen'),
-                     RESOURCELIB_DISPLAY_POPUP    => get_string('resourcedisplaypopup'));
+                     RESOURCELIB_DISPLAY_POPUP    => get_string('resourcedisplaypopup'),
+                     RESOURCELIB_DISPLAY_PREVIEW  => get_string('resourcedisplaypreview'));
 
     $result = array();
 
