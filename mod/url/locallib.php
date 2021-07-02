@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once("$CFG->libdir/filelib.php");
 require_once("$CFG->libdir/resourcelib.php");
 require_once("$CFG->dirroot/mod/url/lib.php");
+require_once("$CFG->dirroot/lib/classes/local/url_unfurl.php");
 
 /**
  * This methods does weak url validation, we are looking for major problems only,
@@ -288,20 +289,92 @@ function url_print_workaround($url, $cm, $course) {
         $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
         $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
         $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
-        $extra = "onclick=\"window.open('$jsfullurl', '', '$wh'); return false;\"";
+        $onclick = "window.open('$jsfullurl', '', '$wh'); return false;";
 
     } else if ($display == RESOURCELIB_DISPLAY_NEW) {
-        $extra = "onclick=\"this.target='_blank';\"";
+        $onclick = "this.target='_blank';";
 
     } else {
-        $extra = '';
+        $onclick = '';
     }
 
-    echo '<div class="urlworkaround">';
-    print_string('clicktoopen', 'url', "<a href=\"$fullurl\" $extra>$fullurl</a>");
-    echo '</div>';
+    $unfurl_store = unfurl_store::get_instance();
+    $unfurled = $unfurl_store->get_unfurl($fullurl);
 
-    echo $OUTPUT->footer();
+    $fallback_text = get_string(
+        'clicktoopen',
+        'url',
+        html_writer::tag(
+            'a',
+            $fullurl,
+            array(
+                'target' => '_blank',
+                'rel' => 'noopener noreferrer',
+                'href' => $fullurl,
+            )
+        )
+    );
+
+    $output = '';
+    $output .= html_writer::start_tag(
+        'div',
+        array(
+            'class' => 'urlworkaround'
+        )
+    );
+    if ($unfurled->no_og_metadata) {
+        $output .= $fallback_text;
+     } else {
+        $title = $unfurled->title ?? $url->name;
+        $output .= html_writer::start_tag(
+            'a',
+            array(
+                'target' => '_blank',
+                'rel' => 'noopener noreferrer',
+                'aria-labeledby' => 'url-workaround-og-title',
+                'href' => $fullurl,
+                'onclick' => $onclick,
+            )
+        );
+        $output .= html_writer::tag(
+            'h3',
+            $title,
+            array(
+                'id' => 'url-workaround-og-title',
+            )
+        );
+        if (!empty($unfurled->site_name)) {
+            $output .= html_writer::tag(
+                'h4',
+                get_string('socialmediametatag:linkfrom', 'url').$unfurled->site_name
+            );
+        }
+        if (!empty($unfurled->image)) {
+            $output .= html_writer::tag(
+                'img',
+                '',
+                array(
+                    'width' => 200,
+                    'src' => $unfurled->image,
+                    'alt' => get_string('socialmediametatag:imagealt', 'url').$title,
+                    'onerror' => "arguments[0].currentTarget.style.display='none'",
+                )
+            );
+        }
+        if (!empty($unfurled->description)) {
+            $output .= html_writer::tag('br', '');
+            $output .= html_writer::tag(
+                'span',
+                $unfurled->description
+            );
+        }
+        $output .= html_writer::end_tag('a');
+     }
+    $output .= html_writer::end_tag('div');
+
+    $output .= $OUTPUT->footer();
+
+    echo $output;
     die;
 }
 

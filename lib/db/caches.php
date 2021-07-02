@@ -493,4 +493,10 @@ $definitions = array(
         'staticacceleration' => true,
         'datasource' => '\core_course\cache\course_image',
     ],
+
+    // Cache for url unfurl.
+    'unfurl' => [
+        'mode'  => cache_store::MODE_APPLICATION,
+        'ttl'   => 259200,
+    ],
 );
